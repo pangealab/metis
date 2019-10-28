@@ -23,10 +23,10 @@ spec:
       name: minio:latest
   source:
     git:
-      uri: ssh://git@gitlab.com/martius/marineris.git
+      uri: ssh://git@github.com/advlab/metis.git
       ref: master
     sourceSecret:
-      name: gitlab-martius
+      name: github-metis
     type: Git
   strategy:
     type: Docker
@@ -35,7 +35,7 @@ spec:
   triggers:
   - type: Generic
     generic:
-      secret: gitlab-martius
+      secret: github-metis
       allowEnv: true
 status:
   lastVersion: 0
