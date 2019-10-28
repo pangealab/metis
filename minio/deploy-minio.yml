@@ -107,9 +107,9 @@ objects:
         containers:
           - env:
               - name: MINIO_ACCESS_KEY
-                value: changeit
+                value: ${MINIO_ACCESS_KEY}
               - name: MINIO_SECRET_KEY
-                value: changeit
+                value: ${MINIO_SECRET_KEY}
             image: minio
             imagePullPolicy: Always
             name: ${POD_NAME}
