@@ -134,7 +134,7 @@ objects:
         restartPolicy: Always
         schedulerName: default-scheduler
         securityContext: {}
-        serviceAccountName: marineris
+        serviceAccountName: metis
         terminationGracePeriodSeconds: 30
         volumes:
           - name: ${POD_NAME}-data
