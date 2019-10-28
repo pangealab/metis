@@ -1,0 +1,11 @@
+###############################################################################
+#                         Build Minio.io Image Stream                         #
+###############################################################################
+kind: ImageStream
+apiVersion: v1
+metadata:
+  name: minio
+  labels:
+    template: build-minio-imagestream
+status:
+  dockerImageRepository: ''

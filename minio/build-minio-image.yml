@@ -1,0 +1,41 @@
+###############################################################################
+#                             Build Minio.io Image                            #
+###############################################################################
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  annotations:
+    template.alpha.openshift.io/wait-for-ready: 'true'
+  labels:
+    template: build-minio-image
+  name: build-minio-image
+spec:
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "4Gi"
+    limits:
+      cpu: "1000m"
+      memory: "4Gi"
+  output:
+    to:
+      kind: ImageStreamTag
+      name: minio:latest
+  source:
+    git:
+      uri: ssh://git@gitlab.com/martius/marineris.git
+      ref: master
+    sourceSecret:
+      name: gitlab-martius
+    type: Git
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: minio/Dockerfile
+  triggers:
+  - type: Generic
+    generic:
+      secret: gitlab-martius
+      allowEnv: true
+status:
+  lastVersion: 0

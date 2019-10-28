@@ -1,0 +1,177 @@
+###############################################################################
+#                             Deploy Minio.io Pod                             #
+###############################################################################
+apiVersion: v1
+kind: Template
+message: Deploy Minio.io Pod
+metadata:
+  labels:
+    template: deploy-minio
+  name: deploy-minio
+  annotations:
+    description: Deploy Minio.io Pod
+    openshift.io/display-name: Deploy Minio.io Pod
+    openshift.io/long-description: Deploy Minio.io Pod
+    openshift.io/provider-display-name: Martius
+    openshift.io/support-url: https://gitlab.com/martius
+    tags: minio
+objects:
+################################################################################
+#                                  Service                                     #
+################################################################################
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: ${POD_NAME}
+    name: ${POD_NAME}
+  spec:
+    ports:
+      - name: 9000-tcp
+        port: 9000
+        protocol: TCP
+        targetPort: 9000
+    selector:
+      deploymentconfig: ${POD_NAME}-deploy-minio
+################################################################################
+#                        Persistent Volume Claim                               #
+################################################################################
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    labels: 
+      app: ${POD_NAME}
+    name: ${POD_NAME}-data
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${MINIO_VOLUME_CAPACITY}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    labels:
+      app: ${POD_NAME} 
+    name: ${POD_NAME}-config
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+################################################################################
+#                                   Route                                      #
+################################################################################
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      app: ${POD_NAME}
+    name: ${POD_NAME}
+  spec:
+    port:
+      targetPort: 9000-tcp
+    tls:
+      termination: edge
+    to:
+      kind: Service
+      name: ${POD_NAME}
+      weight: 100
+    wildcardPolicy: None
+################################################################################
+#                         Deployment Configuration                             #
+################################################################################
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: ${POD_NAME}
+    name: ${POD_NAME}-deploy-minio
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: ${POD_NAME}-deploy-minio
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      recreateParams:
+        timeoutSeconds: 600
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          deploymentconfig: ${POD_NAME}-deploy-minio
+      spec:
+        containers:
+          - env:
+              - name: MINIO_ACCESS_KEY
+                value: changeit
+              - name: MINIO_SECRET_KEY
+                value: changeit
+            image: minio
+            imagePullPolicy: Always
+            name: ${POD_NAME}
+            ports:
+              - containerPort: 9000
+                protocol: TCP
+            resources:
+              requests:
+                cpu: "1000m"
+                memory: "4Gi"        
+              limits:
+                cpu: "1000m"
+                memory: "4Gi"
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+            volumeMounts:
+              - mountPath: /minio/data
+                name: ${POD_NAME}-data
+              - mountPath: /minio/config
+                name: ${POD_NAME}-config
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccountName: marineris
+        terminationGracePeriodSeconds: 30
+        volumes:
+          - name: ${POD_NAME}-data
+            persistentVolumeClaim:
+              claimName: ${POD_NAME}-data
+          - name: ${POD_NAME}-config
+            persistentVolumeClaim:
+              claimName: ${POD_NAME}-config
+    test: false
+    triggers:
+      - type: ConfigChange
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+            - ${POD_NAME}
+          from:
+            kind: ImageStreamTag
+            name: 'minio:latest'
+        type: ImageChange
+################################################################################
+#                            Template Parameters                               #
+################################################################################
+parameters:
+- name: POD_NAME
+  description: Pod Name
+  displayName: Pod Name
+  required: true
+- name: MINIO_ACCESS_KEY
+  description: Minio.io Access Key (e.g. 20 Character Alphanumeric Code)
+  displayName: Minio.io Access Key
+  required: true
+- name: MINIO_SECRET_KEY
+  description: Minio.io Secret Key (e.g. 40 Character Alphanumeric Code)
+  displayName: Minio.io Secret Key
+  required: true
+- name: MINIO_VOLUME_CAPACITY
+  description: Volume space available for Minio.io data, e.g. 512Mi, 2Gi.
+  displayName: Minio.io Volume Capacity
+  required: true
+  value: 100Gi
