@@ -1,6 +1,6 @@
 ![Intro](./docs/minio-io-screenshot.png)
 
-The [Amazon Web Servics S3 Buckets](https://aws.amazon.com/s3/) is an established service which offers reliable, fast and cheap storage, however some projects do not have access to the AWS Cloud or just simply require more autonomy and higher data transfer speeds than otherwise available from AWS. The S3 API is well understood and several S3 API implementations are becoming available from cloud vendors, as well as the open source community for local or on premises deployments. [Mino.io](https://minio.io) is one such prominent component we will be showcasing its deployment as a Pod to ADX, demonstrating ADX's ability to emulate AWS Services while keeping them secure and under your projects control.
+The [Amazon Web Servics S3 Buckets](https://aws.amazon.com/s3/) is an established service which offers reliable, fast and cheap storage, however some projects do not have access to the AWS Cloud or just simply require more autonomy and higher data transfer speeds than otherwise available from AWS. The S3 API is well understood and several S3 API implementations are becoming available from cloud vendors, as well as the open source community for local or on premises deployments. [Mino.io](https://minio.io) is one such prominent component we will be showcasing its deployment as a Pod to OKD, demonstrating OKD's ability to emulate AWS Services while keeping them secure and under your projects control.
 
 # Minio Installation
 
