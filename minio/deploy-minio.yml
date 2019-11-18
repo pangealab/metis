@@ -13,7 +13,7 @@ metadata:
     openshift.io/display-name: Deploy Minio.io Pod
     openshift.io/long-description: Deploy Minio.io Pod
     openshift.io/provider-display-name: Martius
-    openshift.io/support-url: https://gitlab.com/martius
+    openshift.io/support-url: https://github.com/advlab/metis
     tags: minio
 objects:
 ################################################################################
