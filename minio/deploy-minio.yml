@@ -133,7 +133,9 @@ objects:
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
-        securityContext: {}
+        securityContext: 
+          fsGroup: 1000
+          runAsUser: 1000
         serviceAccountName: metis
         terminationGracePeriodSeconds: 30
         volumes:
